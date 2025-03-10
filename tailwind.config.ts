@@ -1,32 +1,30 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+export default {
+  darkMode: "class", // Enables dark mode via class
   content: [
-    './pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './components/**/*.{js,ts,jsx,tsx,mdx}',
-    './app/**/*.{js,ts,jsx,tsx,mdx}',
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
-      gridTemplateColumns: {
-        '13': 'repeat(13, minmax(0, 1fr))',
-      },
       colors: {
-        blue: {
-          400: '#2589FE',
-          500: '#0070F3',
-          600: '#2F6FEB',
-        },
-      },
-    },
-    keyframes: {
-      shimmer: {
-        '100%': {
-          transform: 'translateX(100%)',
+        black: "#000000",
+        white: "#ffffff",
+        gray: {
+          900: "#121212",
+          800: "#1e1e1e",
+          700: "#2e2e2e",
+          600: "#3e3e3e",
+          500: "#525252",
+          400: "#737373",
+          300: "#a3a3a3",
+          200: "#d4d4d4",
+          100: "#e5e5e5",
+          50: "#f5f5f5",
         },
       },
     },
   },
-  plugins: [require('@tailwindcss/forms')],
+  plugins: [],
 };
-export default config;

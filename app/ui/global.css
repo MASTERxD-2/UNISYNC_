@@ -16,3 +16,13 @@ input[type='number']::-webkit-outer-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
+
+/* Light Mode (Default) */
+body {
+  @apply bg-white text-black;
+}
+
+/* Dark Mode */
+.dark body {
+  @apply bg-black text-white;
+}
