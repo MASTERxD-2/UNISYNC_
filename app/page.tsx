@@ -5,25 +5,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 
 export default function Page() {
-  const [date, setDate] = useState<Date | null>(null);
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-    setDate(new Date());
-  }, []);
-
-  const handleDateChange = (value: Date | Date[] | null) => {
-    if (value instanceof Date) {
-      setDate(value);
-    } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof Date) {
-      setDate(value[0]);
-    } else {
-      setDate(null);
-    }
-  };
-
-  return (
+return (
     <main className="flex flex-col min-h-screen">
       <div className="flex-grow">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
