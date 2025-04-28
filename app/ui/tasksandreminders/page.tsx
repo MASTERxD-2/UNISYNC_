@@ -202,7 +202,7 @@ const HeaderWithSidebar: React.FC = () => {
             <div className="flex items-center justify-center relative z-10 mb-2.5">
             
 
-<h1 class="mb-8 text-4xl font-bold text-black sm:text-5xl md:mb-12 md:text-6xl">Tasks and Reminders</h1>
+    <h1 className="mb-8 text-4xl font-bold text-black sm:text-5xl md:mb-12 md:text-6xl">Tasks and Reminders</h1>
 
 
             </div>
