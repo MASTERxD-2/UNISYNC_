@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect } from 'react';
+import Link from "next/link"
 
 const HeaderWithSidebar: React.FC = () => {
   useEffect(() => {
@@ -55,30 +56,67 @@ const HeaderWithSidebar: React.FC = () => {
             id="mobile-navbar"
             className="hidden lg:flex flex-row w-full flex-1"
           >
-            <ul className="text-center flex lg:flex-row flex-col lg:gap-2 xl:gap-4 gap-2 items-center lg:ml-auto">
-              {[
-                'Dashboard',
-                'Department',
-                'Calendar',
-                'Tasks & Reminders',
-                'Schedule',
-                'Profile',
-                'About',
-              ].map((item, index) => (
-                <li key={index}>
-                  <a
-                    href="#"
-                    className={`py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md ${
-                      item === 'Dashboard'
-                        ? 'bg-gray-600 text-white'
-                        : 'bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white'
-                    }`}
-                  >
-                    {item}
-                  </a>
-                </li>
-              ))}
-            </ul>
+          <ul className="text-center flex lg:flex-row flex-col lg:gap-2 xl:gap-4 gap-2 items-center lg:ml-auto">
+            <li>
+              <Link
+                href="/ui/dashboard"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-gray-600 text-white"
+                >
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/department"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                Department
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/calendar"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                Calendar
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/tasksandreminders"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                Tasks & Reminders
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/schedule"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                Schedule
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/profile"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                Profile
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/ui/about"
+                className="py-1.5 px-3 transition-all duration-500 ease-in-out text-xs font-semibold rounded-md bg-transparent text-gray-500 dark:text-white hover:bg-black-600 hover:text-white"
+                >
+                About
+              </Link>
+            </li>
+          </ul>
+
+
+
             <div className="text-center lg:flex items-center gap-1 sm:gap-4 lg:ml-auto">
               <div className="flex items-center lg:justify-start justify-center gap-1 sm:gap-2">
                 <div className="relative w-max p-3">

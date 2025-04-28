@@ -3,9 +3,28 @@
 import { useState, useEffect } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import Link from "next/link"
 
 export default function Page() {
-return (
+  const [date, setDate] = useState<Date | null>(null);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+    setDate(new Date());
+  }, []);
+
+  const handleDateChange = (value: Date | Date[] | null) => {
+    if (value instanceof Date) {
+      setDate(value);
+    } else if (Array.isArray(value) && value.length > 0 && value[0] instanceof Date) {
+      setDate(value[0]);
+    } else {
+      setDate(null);
+    }
+  };
+
+  return (
     <main className="flex flex-col min-h-screen">
       <div className="flex-grow">
         <div className="container mx-auto flex flex-wrap p-5 flex-col md:flex-row items-center">
@@ -40,13 +59,13 @@ return (
               Ethics and equity and principles of justice do not change with the calendar.
               </p>
               <div className="flex flex-col gap-2.5 sm:flex-row sm:justify-center lg:justify-start">
-                <a href="#" className="inline-block rounded-lg bg-black px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base">
+                <Link href="/ui/login" className="inline-block rounded-lg bg-black px-8 py-3 text-center text-sm font-semibold text-white outline-none ring-indigo-300 transition duration-100 hover:bg-indigo-600 focus-visible:ring active:bg-indigo-700 md:text-base">
                   Login
-                </a>
+                </Link>
 
-                <a href="#" className="inline-block rounded-lg bg-gray-200 px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base">
+                <Link href="/ui/registration" className="inline-block rounded-lg bg-gray-200 px-8 py-3 text-center text-sm font-semibold text-gray-500 outline-none ring-indigo-300 transition duration-100 hover:bg-gray-300 focus-visible:ring active:text-gray-700 md:text-base">
                   Regitser
-                </a>
+                </Link>
               </div>
             </div>
             {/* content - end */}
