@@ -7,22 +7,27 @@ export default function Page() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    company: "",
+    preferredName: "",
     email: "",
-    subject: "",
-    message: "",
+    userId: "",
+    department: "",
+    password: "",
+    confirmPassword: "",
+    notes: "",
   });
 
-  const handleChange = (e) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form Submitted:", formData);
     alert("Form submitted successfully!");
   };
-
+  
   return (
     <main className="flex flex-col min-h-screen">
       <div className="flex-grow">
