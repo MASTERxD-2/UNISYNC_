@@ -27,7 +27,7 @@ export default function Page() {
     console.log("Form Submitted:", formData);
     alert("Form submitted successfully!");
   };
-  
+
   return (
     <main className="flex flex-col min-h-screen">
       <div className="flex-grow">
@@ -78,7 +78,7 @@ export default function Page() {
                 <label htmlFor="preferred name" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Preferred Name*</label>
                 <input
                   name="company"
-                  value={formData.preferredname}
+                  value={formData.preferredName}
                   onChange={handleChange}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                 />
@@ -100,7 +100,7 @@ export default function Page() {
                 <label htmlFor="subject" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">User ID*</label>
                 <input
                   name="subject"
-                  value={formData.subject}
+                  value={formData.userId}
                   onChange={handleChange}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                   required
@@ -110,7 +110,7 @@ export default function Page() {
                 <label htmlFor="subject" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Department*</label>
                 <input
                   name="subject"
-                  value={formData.subject}
+                  value={formData.department}
                   onChange={handleChange}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                   required
@@ -121,7 +121,7 @@ export default function Page() {
                 <label htmlFor="subject" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Password*</label>
                 <input
                   name="subject"
-                  value={formData.subject}
+                  value={formData.password}
                   onChange={handleChange}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                   required
@@ -132,7 +132,7 @@ export default function Page() {
                 <label htmlFor="subject" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Confirm Password*</label>
                 <input
                   name="subject"
-                  value={formData.subject}
+                  value={formData.confirmPassword}
                   onChange={handleChange}
                   className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                   required
@@ -143,7 +143,7 @@ export default function Page() {
                 <label htmlFor="message" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Notes*</label>
                 <textarea
                   name="message"
-                  value={formData.message}
+                  value={formData.notes}
                   onChange={handleChange}
                   className="h-25 w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
                   required
