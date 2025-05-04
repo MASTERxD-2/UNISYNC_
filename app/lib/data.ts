@@ -1,218 +1,149 @@
 import postgres from 'postgres';
 import {
-  CustomerField,
-  CustomersTableType,
-  InvoiceForm,
-  InvoicesTable,
-  LatestInvoiceRaw,
-  Revenue,
+  User,
+  Department,
+  Event,
+  EventAttendee,
+  Permission,
+  Notification,
+  Task,
+  AuditLog,
+  RecurringEvent,
+  CourseAssignment,
+  AvailabilitySlot,
+  SharedCalendar,
 } from './definitions';
-import { formatCurrency } from './utils';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
-export async function fetchRevenue() {
+export async function fetchUsers() {
   try {
-    // Artificially delay a response for demo purposes.
-    // Don't do this in production :)
-
-    // console.log('Fetching revenue data...');
-    // await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const data = await sql<Revenue[]>`SELECT * FROM revenue`;
-
-    // console.log('Data fetch completed after 3 seconds.');
-
-    return data;
+    const users = await sql<User[]>`SELECT * FROM users ORDER BY created_at DESC`;
+    return users;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch revenue data.');
+    throw new Error('Failed to fetch users.');
   }
 }
 
-export async function fetchLatestInvoices() {
+export async function fetchDepartments() {
   try {
-    const data = await sql<LatestInvoiceRaw[]>`
-      SELECT invoices.amount, customers.name, customers.image_url, customers.email, invoices.id
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      ORDER BY invoices.date DESC
-      LIMIT 5`;
-
-    const latestInvoices = data.map((invoice) => ({
-      ...invoice,
-      amount: formatCurrency(invoice.amount),
-    }));
-    return latestInvoices;
+    const departments = await sql<Department[]>`SELECT * FROM departments ORDER BY name ASC`;
+    return departments;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch the latest invoices.');
+    throw new Error('Failed to fetch departments.');
   }
 }
 
-export async function fetchCardData() {
+export async function fetchRecentEvents(limit = 10) {
   try {
-    // You can probably combine these into a single SQL query
-    // However, we are intentionally splitting them to demonstrate
-    // how to initialize multiple queries in parallel with JS.
-    const invoiceCountPromise = sql`SELECT COUNT(*) FROM invoices`;
-    const customerCountPromise = sql`SELECT COUNT(*) FROM customers`;
-    const invoiceStatusPromise = sql`SELECT
-         SUM(CASE WHEN status = 'paid' THEN amount ELSE 0 END) AS "paid",
-         SUM(CASE WHEN status = 'pending' THEN amount ELSE 0 END) AS "pending"
-         FROM invoices`;
-
-    const data = await Promise.all([
-      invoiceCountPromise,
-      customerCountPromise,
-      invoiceStatusPromise,
-    ]);
-
-    const numberOfInvoices = Number(data[0][0].count ?? '0');
-    const numberOfCustomers = Number(data[1][0].count ?? '0');
-    const totalPaidInvoices = formatCurrency(data[2][0].paid ?? '0');
-    const totalPendingInvoices = formatCurrency(data[2][0].pending ?? '0');
-
-    return {
-      numberOfCustomers,
-      numberOfInvoices,
-      totalPaidInvoices,
-      totalPendingInvoices,
-    };
+    const events = await sql<Event[]>`
+      SELECT * FROM events
+      ORDER BY start_time DESC
+      LIMIT ${limit}`;
+    return events;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch card data.');
+    throw new Error('Failed to fetch events.');
   }
 }
 
-const ITEMS_PER_PAGE = 6;
-export async function fetchFilteredInvoices(
-  query: string,
-  currentPage: number,
-) {
-  const offset = (currentPage - 1) * ITEMS_PER_PAGE;
-
+export async function fetchEventAttendees(eventId: string) {
   try {
-    const invoices = await sql<InvoicesTable[]>`
-      SELECT
-        invoices.id,
-        invoices.amount,
-        invoices.date,
-        invoices.status,
-        customers.name,
-        customers.email,
-        customers.image_url
-      FROM invoices
-      JOIN customers ON invoices.customer_id = customers.id
-      WHERE
-        customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`} OR
-        invoices.amount::text ILIKE ${`%${query}%`} OR
-        invoices.date::text ILIKE ${`%${query}%`} OR
-        invoices.status ILIKE ${`%${query}%`}
-      ORDER BY invoices.date DESC
-      LIMIT ${ITEMS_PER_PAGE} OFFSET ${offset}
-    `;
-
-    return invoices;
+    const attendees = await sql<EventAttendee[]>`
+      SELECT * FROM event_attendees WHERE event_id = ${eventId}`;
+    return attendees;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoices.');
+    throw new Error('Failed to fetch event attendees.');
   }
 }
 
-export async function fetchInvoicesPages(query: string) {
+export async function fetchPermissionsByUser(userId: string) {
   try {
-    const data = await sql`SELECT COUNT(*)
-    FROM invoices
-    JOIN customers ON invoices.customer_id = customers.id
-    WHERE
-      customers.name ILIKE ${`%${query}%`} OR
-      customers.email ILIKE ${`%${query}%`} OR
-      invoices.amount::text ILIKE ${`%${query}%`} OR
-      invoices.date::text ILIKE ${`%${query}%`} OR
-      invoices.status ILIKE ${`%${query}%`}
-  `;
-
-    const totalPages = Math.ceil(Number(data[0].count) / ITEMS_PER_PAGE);
-    return totalPages;
+    const permissions = await sql<Permission[]>`
+      SELECT * FROM permissions WHERE user_id = ${userId}`;
+    return permissions;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch total number of invoices.');
+    throw new Error('Failed to fetch permissions.');
   }
 }
 
-export async function fetchInvoiceById(id: string) {
+export async function fetchNotifications(userId: string) {
   try {
-    const data = await sql<InvoiceForm[]>`
-      SELECT
-        invoices.id,
-        invoices.customer_id,
-        invoices.amount,
-        invoices.status
-      FROM invoices
-      WHERE invoices.id = ${id};
-    `;
-
-    const invoice = data.map((invoice) => ({
-      ...invoice,
-      // Convert amount from cents to dollars
-      amount: invoice.amount / 100,
-    }));
-
-    return invoice[0];
+    const notifications = await sql<Notification[]>`
+      SELECT * FROM notifications WHERE user_id = ${userId} ORDER BY created_at DESC`;
+    return notifications;
   } catch (error) {
     console.error('Database Error:', error);
-    throw new Error('Failed to fetch invoice.');
+    throw new Error('Failed to fetch notifications.');
   }
 }
 
-export async function fetchCustomers() {
+export async function fetchTasks(userId: string) {
   try {
-    const customers = await sql<CustomerField[]>`
-      SELECT
-        id,
-        name
-      FROM customers
-      ORDER BY name ASC
-    `;
-
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch all customers.');
+    const tasks = await sql<Task[]>`
+      SELECT * FROM tasks WHERE user_id = ${userId} ORDER BY due_date ASC`;
+    return tasks;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch tasks.');
   }
 }
 
-export async function fetchFilteredCustomers(query: string) {
+export async function fetchAuditLogs(userId: string) {
   try {
-    const data = await sql<CustomersTableType[]>`
-		SELECT
-		  customers.id,
-		  customers.name,
-		  customers.email,
-		  customers.image_url,
-		  COUNT(invoices.id) AS total_invoices,
-		  SUM(CASE WHEN invoices.status = 'pending' THEN invoices.amount ELSE 0 END) AS total_pending,
-		  SUM(CASE WHEN invoices.status = 'paid' THEN invoices.amount ELSE 0 END) AS total_paid
-		FROM customers
-		LEFT JOIN invoices ON customers.id = invoices.customer_id
-		WHERE
-		  customers.name ILIKE ${`%${query}%`} OR
-        customers.email ILIKE ${`%${query}%`}
-		GROUP BY customers.id, customers.name, customers.email, customers.image_url
-		ORDER BY customers.name ASC
-	  `;
+    const logs = await sql<AuditLog[]>`
+      SELECT * FROM audit_logs WHERE user_id = ${userId} ORDER BY timestamp DESC`;
+    return logs;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch audit logs.');
+  }
+}
 
-    const customers = data.map((customer) => ({
-      ...customer,
-      total_pending: formatCurrency(customer.total_pending),
-      total_paid: formatCurrency(customer.total_paid),
-    }));
+export async function fetchRecurringEvents(eventId: string) {
+  try {
+    const recurrence = await sql<RecurringEvent[]>`
+      SELECT * FROM recurring_events WHERE event_id = ${eventId}`;
+    return recurrence;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch recurring event details.');
+  }
+}
 
-    return customers;
-  } catch (err) {
-    console.error('Database Error:', err);
-    throw new Error('Failed to fetch customer table.');
+export async function fetchCourseAssignments(professorId: string) {
+  try {
+    const courses = await sql<CourseAssignment[]>`
+      SELECT * FROM course_assignments WHERE professor_id = ${professorId}`;
+    return courses;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch course assignments.');
+  }
+}
+
+export async function fetchAvailabilitySlots(facultyId: string) {
+  try {
+    const slots = await sql<AvailabilitySlot[]>`
+      SELECT * FROM availability_slots WHERE faculty_id = ${facultyId} ORDER BY start_time ASC`;
+    return slots;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch availability slots.');
+  }
+}
+
+export async function fetchSharedCalendars(userId: string) {
+  try {
+    const calendars = await sql<SharedCalendar[]>`
+      SELECT * FROM shared_calendars WHERE owner_id = ${userId} OR shared_with_id = ${userId}`;
+    return calendars;
+  } catch (error) {
+    console.error('Database Error:', error);
+    throw new Error('Failed to fetch shared calendars.');
   }
 }

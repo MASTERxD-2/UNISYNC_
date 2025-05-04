@@ -1,88 +1,113 @@
-// This file contains type definitions for your data.
+// This file contains type definitions for your database schema.
 // It describes the shape of the data, and what data type each property should accept.
-// For simplicity of teaching, we're manually defining these types.
-// However, these types are generated automatically if you're using an ORM such as Prisma.
+
 export type User = {
-  id: string;
+  user_id: string;
   name: string;
   email: string;
-  password: string;
+  role: string;
+  institutional_id: string;
+  department_id: string;
+  profile_picture?: string;
+  created_at: string;
+  last_login: string;
 };
 
-export type Customer = {
-  id: string;
+export type Department = {
+  department_id: string;
   name: string;
-  email: string;
-  image_url: string;
+  abbreviation: string;
+  faculty_incharge: string;
 };
 
-export type Invoice = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  date: string;
-  // In TypeScript, this is called a string union type.
-  // It means that the "status" property can only be one of the two strings: 'pending' or 'paid'.
-  status: 'pending' | 'paid';
+export type Event = {
+  event_id: string;
+  title: string;
+  description: string;
+  start_time: string;
+  end_time: string;
+  created_by: string;
+  location: string;
+  visibility: 'public' | 'private'; // Adjust visibility type if needed
+  event_type: string;
+  is_recurring: boolean;
+  recurrence_pattern?: string; // If recurring, a recurrence pattern might exist
+  created_at: string;
 };
 
-export type Revenue = {
-  month: string;
-  revenue: number;
+export type EventAttendee = {
+  event_id: string;
+  user_id: string;
+  status: 'accepted' | 'pending' | 'declined'; // Adjust based on your application
+  is_organizer: boolean;
 };
 
-export type LatestInvoice = {
-  id: string;
-  name: string;
-  image_url: string;
-  email: string;
-  amount: string;
+export type Permission = {
+  permission_id: string;
+  user_id: string;
+  event_id: string;
+  access_level: 'read' | 'write' | 'admin'; // Adjust access levels based on your application
 };
 
-// The database returns a number for amount, but we later format it to a string with the formatCurrency function
-export type LatestInvoiceRaw = Omit<LatestInvoice, 'amount'> & {
-  amount: number;
+export type Notification = {
+  notification_id: string;
+  user_id: string;
+  type: string; // Can be 'email', 'push', or 'in-app'
+  message: string;
+  is_read: boolean;
+  created_at: string;
 };
 
-export type InvoicesTable = {
-  id: string;
-  customer_id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  date: string;
-  amount: number;
-  status: 'pending' | 'paid';
+export type Task = {
+  task_id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  due_date: string;
+  priority: 'low' | 'medium' | 'high';
+  status: 'pending' | 'completed';
+  is_recurring: boolean;
+  recurrence_pattern?: string;
+  created_at: string;
 };
 
-export type CustomersTableType = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: number;
-  total_paid: number;
+export type AuditLog = {
+  log_id: string;
+  user_id: string;
+  action: string; // Can be actions like 'create', 'update', 'delete', etc.
+  target_id: string; // ID of the record being acted upon
+  timestamp: string;
+  ip_address: string;
 };
 
-export type FormattedCustomersTable = {
-  id: string;
-  name: string;
-  email: string;
-  image_url: string;
-  total_invoices: number;
-  total_pending: string;
-  total_paid: string;
+export type RecurringEvent = {
+  recurring_id: string;
+  event_id: string;
+  frequency: 'daily' | 'weekly' | 'monthly' | 'yearly';
+  interval: number; // Number of intervals between events (e.g., every 2 days, 3 weeks, etc.)
+  end_date: string;
 };
 
-export type CustomerField = {
-  id: string;
-  name: string;
+export type CourseAssignment = {
+  assignment_id: string;
+  professor_id: string;
+  course_code: string;
+  course_title: string;
+  semester: string;
 };
 
-export type InvoiceForm = {
-  id: string;
-  customer_id: string;
-  amount: number;
-  status: 'pending' | 'paid';
+export type AvailabilitySlot = {
+  slot_id: string;
+  faculty_id: string;
+  start_time: string;
+  end_time: string;
+  is_booked: boolean;
+};
+
+export type SharedCalendar = {
+  calendar_id: string;
+  owner_id: string;
+  shared_with_id: string;
+  access_level: 'view' | 'edit'; // Adjust based on your application's needs
+  created_at: string;
 };

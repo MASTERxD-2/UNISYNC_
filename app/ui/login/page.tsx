@@ -1,7 +1,51 @@
-import Link from "next/link"
+import Link from "next/link";
+import { neon } from '@neondatabase/serverless';
+import { useState } from 'react';
 
+export default function LoginPage() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-export default function Page() {
+  async function login(formData: FormData) {
+    'use server';
+    const email = formData.get('email') as string;
+    const password = formData.get('password') as string;
+
+    // Connect to the Neon database
+    const sql = neon(`${process.env.DATABASE_URL}`);
+    
+    try {
+      // Check if user exists with the provided email
+      const result = await sql`
+        SELECT * FROM users WHERE email = ${email}
+      `;  // Execute the query
+
+      if (!result || result.length === 0) {
+        setErrorMessage('No user found with this email');
+        return;
+      }
+
+      const user = result[0];  // Assuming the first result is the user
+
+      // Assuming passwords are stored hashed, use bcrypt or a similar library to verify the password
+      // This example assumes you're using a password hash comparison function (like bcrypt.compare)
+
+      const isPasswordCorrect = user.password === password; // Replace this with actual password hashing logic
+      if (!isPasswordCorrect) {
+        setErrorMessage('Incorrect password');
+        return;
+      }
+
+      // If login successful, redirect or set a session (you might want to add actual session handling here)
+      // Example: window.location.href = '/dashboard'; or use Next.js router
+
+      setErrorMessage(null); // Clear error message on successful login
+      console.log('Login successful');
+    } catch (error) {
+      setErrorMessage('An error occurred during login');
+      console.error(error);
+    }
+  }
+
     return (
       <main className="flex flex-col min-h-screen">
   <div className="flex-grow">  {/* This ensures content expands and pushes footer down */}
