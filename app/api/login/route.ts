@@ -1,37 +1,64 @@
-// app/api/login/route.ts
-import { neon } from '@neondatabase/serverless';
-import { NextResponse } from 'next/server';
+// pages/api/login/route.ts
+import { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcrypt';
+// import { createClient } from '@neondatabase/serverless'; // Corrected Neon import
+import jwt from 'jsonwebtoken';
 
-const sql = neon(process.env.DATABASE_URL!);
+// Create a direct instance of the Neon client
+// const neon = createClient({
+//   connectionString: process.env.NEON_DB_CONNECTION_STRING, // Connection string from environment variables
+// });
 
-export async function POST(req: Request) {
-  const formData = await req.formData();
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Handle only POST requests for login
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method Not Allowed' });
+  }
 
+  const { email, password } = req.body;
+
+  // Ensure email and password are provided
   if (!email || !password) {
-    return NextResponse.json({ error: "Missing credentials" }, { status: 400 });
+    return res.status(400).json({ message: 'Email and password are required.' });
   }
 
   try {
-    const result = await sql`SELECT * FROM users WHERE email = ${email}`;
+    // Query the database for the user by email
+    const result = await neon.query('SELECT * FROM users WHERE email = $1', [email]);
 
-    if (!result || result.length === 0) {
-      return NextResponse.json({ error: "No user found with this email" }, { status: 404 });
+    // Check if the user exists
+    if (result.rowCount === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    const user = result[0];
+    const user = result.rows[0];
 
-    // NOTE: Replace this with proper hashed password comparison (e.g., bcrypt.compare)
-    if (user.password !== password) {
-      return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
+    // Compare the provided password with the hashed password stored in the database
+    const isValidPassword = await bcrypt.compare(password, user.password);
+
+    if (!isValidPassword) {
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // TODO: Add session/cookie/token logic here as needed
+    // Create a JWT token with the user's ID and role
+    const token = jwt.sign(
+      { userId: user.user_id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
-    return NextResponse.json({ success: true });
-  } catch (err) {
-    console.error("Login error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    // Set the JWT token as an HttpOnly cookie (for security reasons)
+    res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=3600`);
+
+    // Redirect based on the user role
+    if (user.role === 'admin') {
+      return res.status(200).json({ success: true, redirect: '/admin/dashboard' });
+    } else {
+      return res.status(200).json({ success: true, redirect: '/user/dashboard' });
+    }
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 }
