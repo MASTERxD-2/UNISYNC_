@@ -1,6 +1,29 @@
+// /app/dashboard/page.tsx
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from "next/link"
+import { useRouter } from 'next/navigation';
+
+const Dashboard = () => {
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      const res = await fetch('/api/testdb');
+      const data = await res.json();
+      if (data.user) {
+        setUser(data.user);
+      } else {
+        router.push('/login'); // Redirect to login if no user data
+      }
+    };
+    
+    fetchUserData();
+  }, [router]);
+
+  if (!user) return <div>Loading...</div>;
+}
 
 const HeaderWithSidebar: React.FC = () => {
   useEffect(() => {

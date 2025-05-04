@@ -1,64 +1,37 @@
-// pages/api/login/route.ts
-import { NextApiRequest, NextApiResponse } from 'next';
-import bcrypt from 'bcrypt';
-// import { createClient } from '@neondatabase/serverless'; // Corrected Neon import
-import jwt from 'jsonwebtoken';
+import { NextResponse } from "next/server";
+import { Client } from "pg";
 
-// Create a direct instance of the Neon client
-// const neon = createClient({
-//   connectionString: process.env.NEON_DB_CONNECTION_STRING, // Connection string from environment variables
-// });
+// Replace with your Neon connection details
+const client = new Client({
+  connectionString: process.env.DATABASE_URL, // Ensure DATABASE_URL is correctly set in your environment
+});
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Handle only POST requests for login
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method Not Allowed' });
-  }
+client.connect();
 
-  const { email, password } = req.body;
-
-  // Ensure email and password are provided
-  if (!email || !password) {
-    return res.status(400).json({ message: 'Email and password are required.' });
-  }
-
+export async function POST(request: Request) {
   try {
-    // Query the database for the user by email
-    const result = await neon.query('SELECT * FROM users WHERE email = $1', [email]);
+    const { email, password } = await request.json(); // Ensure it's JSON
 
-    // Check if the user exists
-    if (result.rowCount === 0) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    const user = result.rows[0];
-
-    // Compare the provided password with the hashed password stored in the database
-    const isValidPassword = await bcrypt.compare(password, user.password);
-
-    if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-
-    // Create a JWT token with the user's ID and role
-    const token = jwt.sign(
-      { userId: user.user_id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+    // Now, query your database to check for the user
+    const result = await client.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
     );
 
-    // Set the JWT token as an HttpOnly cookie (for security reasons)
-    res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Path=/; Max-Age=3600`);
-
-    // Redirect based on the user role
-    if (user.role === 'admin') {
-      return res.status(200).json({ success: true, redirect: '/admin/dashboard' });
+    if (result.rows.length > 0) {
+      const user = result.rows[0];
+      // Assume password is hashed, compare hashes here
+      const isPasswordCorrect = password === user.password; // Use bcrypt for password hash comparison
+      if (isPasswordCorrect) {
+        return NextResponse.json({ message: "Login successful" });
+      } else {
+        return NextResponse.json({ message: "Invalid password" }, { status: 401 });
+      }
     } else {
-      return res.status(200).json({ success: true, redirect: '/user/dashboard' });
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
-
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Internal server error' });
+    return NextResponse.json({ message: "Something went wrong" }, { status: 500 });
   }
 }

@@ -1,32 +1,40 @@
 "use client";
 import Link from "next/link";
-import { neon } from '@neondatabase/serverless';
-import { useState } from 'react';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError(""); // Clear previous errors
 
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Ensure content type is JSON
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
 
-    const data = await res.json();
-
-    if (data.success) {
-      // ✅ REDIRECTION TO DASHBOARD
-      window.location.href = 'ui/dashboard'; 
-    } else {
-      setError(data.message || 'Login failed');
+      if (res.ok) {
+        // Redirect to the dashboard if login is successful
+        router.push("dashboard");
+      } else {
+        // Handle errors (e.g., invalid credentials)
+        const data = await res.json();
+        setError(data.message || "Login failed");
+      }
+    } catch (error) {
+      setError("An error occurred. Please try again.");
     }
   };
 
@@ -47,27 +55,27 @@ export default function LoginPage() {
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">Login</h2>
   
-            <form className="mx-auto max-w-lg rounded-lg border" method="POST" action="/api/login">
+            <form className="mx-auto max-w-lg rounded-lg border" onSubmit={handleLogin} >
               <div className="flex flex-col gap-4 p-4 md:p-8">
                 <div>
                   <label htmlFor="email" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Email</label>
                   <input
-                    id="email"
-                    name="email"
                     type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
-                    className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                   />
                 </div>
   
                 <div>
                   <label htmlFor="password" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Password</label>
                   <input
-                    id="password"
-                    name="password"
                     type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none ring-indigo-300 transition duration-100 focus:ring"
                   />
                 </div>
   
@@ -105,6 +113,7 @@ export default function LoginPage() {
                 </p>
               </div>
             </form>
+            {error && <p>{error}</p>}
           </div>
         </div>
       </div>
@@ -127,4 +136,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
