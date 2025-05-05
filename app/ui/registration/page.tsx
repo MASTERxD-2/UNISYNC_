@@ -13,7 +13,6 @@ export default function RegistrationPage() {
     email: "",
     user_id: "",
     institutional_id: "",
-    department_id: "",
     role: "student",
     password: "",
     confirm_password: "",
@@ -142,18 +141,6 @@ export default function RegistrationPage() {
     <input
       name="institutional_id"
       value={formData.institutional_id}
-      onChange={handleChange}
-      className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
-      required
-    />
-  </div>
-
-  <div className="sm:col-span-2">
-    <label className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Department ID*</label>
-    <input
-      type="number"
-      name="department_id"
-      value={formData.department_id}
       onChange={handleChange}
       className="w-full rounded border bg-gray-50 px-3 py-2 text-gray-800 outline-none focus:ring"
       required
