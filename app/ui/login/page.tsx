@@ -55,7 +55,7 @@ export default function LoginPage() {
           <div className="mx-auto max-w-screen-2xl px-4 md:px-8">
             <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-8 lg:text-3xl">Login</h2>
   
-            <form className="mx-auto max-w-lg rounded-lg border" onSubmit={handleLogin} >
+            <form className="mx-auto max-w-lg rounded-lg border" onSubmit={handleLogin}>
               <div className="flex flex-col gap-4 p-4 md:p-8">
                 <div>
                   <label htmlFor="email" className="mb-2 inline-block text-sm text-gray-800 sm:text-base">Email</label>

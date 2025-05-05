@@ -56,7 +56,6 @@ const HeaderWithSidebar: React.FC = () => {
             id="mobile-navbar"
             className="hidden lg:flex flex-row w-full flex-1"
           >
-            import Link from "next/link";
 
           <ul className="text-center flex lg:flex-row flex-col lg:gap-2 xl:gap-4 gap-2 items-center lg:ml-auto">
             <li>
