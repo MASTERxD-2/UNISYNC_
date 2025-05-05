@@ -2,6 +2,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "packageManager": "pnpm@10.4.1",
     "dev": "next dev --turbopack",
     "start": "next start"
   },
