@@ -1,8 +1,11 @@
 "use client";
 import React, { useEffect } from 'react';
 import Link from "next/link";
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 const HeaderWithSidebar: React.FC = () => {
+  const { data: session } = useSession();
   useEffect(() => {
     const navbarToggle = document.getElementById('navbar-toggle');
     const mobileNavbar = document.getElementById('mobile-navbar');
@@ -161,13 +164,15 @@ const HeaderWithSidebar: React.FC = () => {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-              </svg>
-
-                <span className="max-lg:hidden">Logout</span>
-              </button>
+              <a href="javascript:;"
+                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                              </svg>
+                              <span className="max-lg:hidden">Logout</span>
+                            </a>
             </div>
           </div>
         </div>
@@ -177,10 +182,10 @@ const HeaderWithSidebar: React.FC = () => {
       <div className="pt-[68px]">
         <div className="py-3.5 lg:px-8 px-3 bg-gray-50 dark:bg-gray-800">
           <div className="block max-lg:pl-6">
-            <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
+          <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
-                Ronald!
+                {session?.user?.name || 'User'}
               </span>
             </h6>
             <p className="text-xs font-medium text-gray-900 dark:text-white">
@@ -195,7 +200,7 @@ const HeaderWithSidebar: React.FC = () => {
     <div className="mb-10 md:mb-16">
       <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Meet our Team</h2>
 
-      <p className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">This is a section of some simple filler text, also known as placeholder text. It shares some characteristics of a real written text but is random or otherwise generated.</p>
+      <p className="mx-auto max-w-screen-md text-center text-gray-500 md:text-lg">The Computer Science Department </p>
     </div>
 
 
@@ -208,7 +213,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">John McCulling</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Founder / CEO</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Head of the Department</p>
         </div>
       </div>
       
@@ -219,7 +224,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">Kate Berg</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">CFO</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Assistant Professor</p>
         </div>
       </div>
      
@@ -230,7 +235,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">Greg Jackson</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">CTO</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Associate Professor</p>
         </div>
       </div>
    
@@ -241,7 +246,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">Robert Greyson</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Creative Director</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Senior Professor</p>
         </div>
       </div>
   
@@ -252,7 +257,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">John Roberts</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Investor Relations</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Assistant Professor</p>
         </div>
       </div>
    
@@ -265,7 +270,7 @@ const HeaderWithSidebar: React.FC = () => {
 
         <div>
           <div className="text-center font-bold text-gray-500 sm:text-left md:text-lg">Judy Amandez</div>
-          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Senior Art Director</p>
+          <p className="text-center text-sm text-gray-500 sm:text-left md:text-base">Senior Director</p>
         </div>
       </div>
      

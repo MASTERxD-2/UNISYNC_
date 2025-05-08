@@ -19,7 +19,7 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onDelete }) => {
   return (
-    <div className="bg-white shadow-md rounded-lg p-4 mb-4">
+    <div className="bg-white-100 shadow-md rounded-lg p-4 mb-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">{task.task_title}</h3>
         <button

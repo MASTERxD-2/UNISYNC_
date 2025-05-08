@@ -15,6 +15,7 @@ import { momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useSession } from "next-auth/react";
+import { signOut } from 'next-auth/react';
 
 const localizer = momentLocalizer(moment);
 
@@ -131,6 +132,9 @@ export default function DashboardPage() {
 
   const today = new Date();
   const formattedDate = formatDate(today);
+  const handleSignOut = () => {
+    signOut();
+  }
 
   const events = tasks.map(task => ({
     title: task.task_title,
@@ -281,13 +285,15 @@ export default function DashboardPage() {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-              </svg>
-
-                <span className="max-lg:hidden">Logout</span>
-              </button>
+              <a href="javascript:;"
+                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                              </svg>
+                              <span className="max-lg:hidden">Logout</span>
+                </a>
             </div>
           </div>
         </div>
@@ -327,68 +333,43 @@ export default function DashboardPage() {
       <h2 className="mb-4 text-center text-2xl font-bold text-gray-800 md:mb-6 lg:text-3xl">Today's Agenda</h2>
     </div>
 
-
     <div className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-8">
-    
-      <a href="#" className="group relative flex h-48 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-64 xl:h-96">
-        <img src="https://images.unsplash.com/photo-1593508512255-86ab42a8e620?auto=format&q=75&fit=crop&w=600" loading="lazy" alt="Photo by Minh Pham" className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110" />
-
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent md:via-transparent"></div>
-
-        <div className="relative mt-auto p-4">
-          <span className="block text-sm text-gray-200">July 19, 2021</span>
-          <h2 className="mb-2 text-xl font-semibold text-white transition duration-100">New trends in Tech</h2>
-
-          <span className="font-semibold text-indigo-300">Read more</span>
+  {tasks.length === 0 ? (
+    <div className="text-gray-500 col-span-full text-center">No tasks found.</div>
+  ) : (
+    tasks.map((task) => (
+      <div
+        key={task.event_id}
+        className="relative flex h-48 flex-col justify-end overflow-hidden rounded-lg shadow-lg md:h-64 xl:h-72 border border-gray-200"
+      >
+        {/* Background Image */}
+        <div
+          className="absolute inset-0 z-0 bg-cover bg-center"
+          style={{
+            backgroundImage: `url('/dashboard.avif')`,
+          }}
+        >
+          <div className="h-full w-full bg-gradient-to-t from-black/60 to-transparent"></div>
         </div>
-      </a>
-      
 
-   
-      <a href="#" className="group relative flex h-48 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-64 xl:h-96">
-        <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&q=75&fit=crop&w=600" loading="lazy" alt="Photo by Lorenzo Herrera" className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110" />
-
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent md:via-transparent"></div>
-
-        <div className="relative mt-auto p-4">
-          <span className="block text-sm text-gray-200">April 07, 2021</span>
-          <h2 className="mb-2 text-xl font-semibold text-white transition duration-100">Working with legacy stacks</h2>
-
-          <span className="font-semibold text-indigo-300">Read more</span>
+        {/* SVG Icon */}
+        <div className="absolute top-3 right-3 z-10 text-white">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
+          </svg>
         </div>
-      </a>
-   
 
-   
-      <a href="#" className="group relative flex h-48 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-64 xl:h-96">
-        <img src="https://images.unsplash.com/photo-1542759564-7ccbb6ac450a?auto=format&q=75&fit=crop&w=600" loading="lazy" alt="Photo by Magicle" className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110" />
-
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent md:via-transparent"></div>
-
-        <div className="relative mt-auto p-4">
-          <span className="block text-sm text-gray-200">March 15, 2021</span>
-          <h2 className="mb-2 text-xl font-semibold text-white transition duration-100">10 best smartphones for devs</h2>
-
-          <span className="font-semibold text-indigo-300">Read more</span>
+        {/* Task Content */}
+        <div className="relative z-10 p-4 text-white">
+          <span className="block text-sm text-gray-200">{new Date(task.due_date).toLocaleDateString()}</span>
+          <h2 className="mb-1 text-lg font-bold">{task.task_title}</h2>
+          <p className="text-sm">{task.description || 'No description provided.'}</p>
         </div>
-      </a>
-    
-
-     
-      <a href="#" className="group relative flex h-48 flex-col overflow-hidden rounded-lg bg-gray-100 shadow-lg md:h-64 xl:h-96">
-        <img src="https://images.unsplash.com/photo-1610465299996-30f240ac2b1c?auto=format&q=75&fit=crop&w=600" loading="lazy" alt="Photo by Martin Sanchez" className="absolute inset-0 h-full w-full object-cover object-center transition duration-200 group-hover:scale-110" />
-
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-gray-800 to-transparent md:via-transparent"></div>
-
-        <div className="relative mt-auto p-4">
-          <span className="block text-sm text-gray-200">January 27, 2021</span>
-          <h2 className="mb-2 text-xl font-semibold text-white transition duration-100">8 High performance Notebooks</h2>
-
-          <span className="font-semibold text-indigo-300">Read more</span>
-        </div>
-      </a>
-   
-    </div>
+      </div>
+    ))
+  )}
+</div>
+ 
   </div>
 </div>
 
@@ -403,22 +384,23 @@ export default function DashboardPage() {
                                             
                                                 <div className="flex gap-5 flex-col">
                                                 <div className="p-6 space-y-6">
-                                                  <div className="bg-white p-4 rounded-xl shadow-md">
-                                                    <h2 className="font-manrope text-3xl leading-tight text-gray-900 mb-1.5">Upcoming Events</h2>
-                                                    {tasks.length === 0 ? (
-                                                      <div className="text-center text-gray-500">No tasks or reminders found.</div>
-                                                    ) : (
-                                                      tasks.map(task => <TaskCard2 key={task.event_id} task={task} />)
-                                                    )}
-                                                  </div>
+                                                <div className="bg-white p-4 rounded-xl shadow-md">
+                                                <h2 className="text-xl font-bold leading-tight text-gray-900 mb-4">Upcoming Events</h2>
+                                                  {tasks.length === 0 ? (
+                                                    <div className="text-center text-gray-500">No tasks or reminders found.</div>
+                                                  ) : (
+                                                    tasks.map(task => <TaskCard2 key={task.event_id} task={task} />)
+                                                  )}
+                                                </div>
+
                                                 </div>
                                               </div>
-              </div>
-              <div className="col-span-12 xl:col-span-7 px-2.5 py-5 sm:p-8 bg-gradient-to-b from-white/25 to-white xl:bg-white rounded-2xl max-xl:row-start-1">
-                <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-5">
-                  <div className="flex items-center gap-4">
-                  </div>
-                </div>
+                                            </div>
+                          <div className="col-span-12 xl:col-span-7 px-2.5 py-5 sm:p-8 bg-gradient-to-b from-white/25 to-white xl:bg-white rounded-2xl max-xl:row-start-1">
+                            <div className="flex flex-col md:flex-row gap-4 items-center justify-between mb-5">
+                              <div className="flex items-center gap-4">
+                              </div>
+                            </div>
 
                 <div className="p-2">
                   <h2 className="text-2xl font-bold mb-4">Calendar</h2>

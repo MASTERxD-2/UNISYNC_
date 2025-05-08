@@ -1,4 +1,13 @@
 "use client";
+
+import { useRouter } from 'next/navigation';
+import TaskCard2 from "@/components/TaskCard2";
+import 'react-big-calendar/lib/css/react-big-calendar.css';  // Default styles for react-big-calendar
+import './calendar.css';  // Your custom styles
+import { momentLocalizer, Views } from "react-big-calendar";
+import moment from "moment";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState, useMemo } from 'react';
 import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
@@ -8,6 +17,7 @@ import { startOfWeek } from 'date-fns/startOfWeek';
 import { getDay } from 'date-fns/getDay';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import './calendar.css';  // Your custom calendar styles
+import { signOut } from "next-auth/react";
 
 // Locale settings for the calendar
 const locales = {
@@ -21,6 +31,33 @@ const localizer = dateFnsLocalizer({
   getDay,
   locales,
 });
+
+
+
+const formatDate = (date: Date): string => {
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+
+  const day = days[date.getDay()];
+  const dateNum = date.getDate();
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+
+  const getOrdinalSuffix = (n: number): string => {
+    if (n > 3 && n < 21) return 'th';
+    switch (n % 10) {
+      case 1: return 'st';
+      case 2: return 'nd';
+      case 3: return 'rd';
+      default: return 'th';
+    }
+  };
+
+  return `${day}, ${dateNum}${getOrdinalSuffix(dateNum)} ${month}, ${year}.`;
+};
 
 // Custom Toolbar for calendar view switching
 const CustomToolbar = ({ label, onView, view }: any) => (
@@ -62,6 +99,9 @@ type EventType = {
 export default function CalendarPage() {
   const [events, setEvents] = useState<EventType[]>([]);
   const [view, setView] = useState<View>('month'); // Explicitly typed to match 'View' type
+  const { data: session } = useSession();
+  const today = new Date();
+  const formattedDate = formatDate(today);
 
   // Fetch events from the API
   useEffect(() => {
@@ -242,13 +282,15 @@ export default function CalendarPage() {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-              </svg>
-
-                <span className="max-lg:hidden">Logout</span>
-              </button>
+              <a href="javascript:;"
+                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                              </svg>
+                              <span className="max-lg:hidden">Logout</span>
+                            </a>
             </div>
           </div>
         </div>
@@ -258,10 +300,10 @@ export default function CalendarPage() {
       <div className="pt-[68px]">
         <div className="py-3.5 lg:px-8 px-3 bg-gray-50 dark:bg-gray-800">
           <div className="block max-lg:pl-6">
-            <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
+          <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
-                Ronald!
+                {session?.user?.name || 'User'}
               </span>
             </h6>
             <p className="text-xs font-medium text-gray-900 dark:text-white">
@@ -272,8 +314,10 @@ export default function CalendarPage() {
         <div className="w-full p-8">
         <section className="bg-white dark:bg-gray-900">
                 <div className="py-8 px-4 mx-auto max-w-screen-xl text-center lg:py-16 lg:px-12">
-                    <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">Monday, 7th April, 2025</h1>
-                    <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Of the five House Calendars, the Private Calendar is the one to which all Private Bills are referred. Private Bills deal with specific individuals, corporations, institutions, and so forth, as distinguished from public bills which deal with classes only..</p>
+                <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+                    {formattedDate}
+                  </h1>
+                     <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Of the five House Calendars, the Private Calendar is the one to which all Private Bills are referred. Private Bills deal with specific individuals, corporations, institutions, and so forth, as distinguished from public bills which deal with classes only..</p>
                 </div>
         </section>
         <div className="p-2">

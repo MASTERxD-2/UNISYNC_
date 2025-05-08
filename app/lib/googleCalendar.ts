@@ -1,6 +1,7 @@
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
 
+import GoogleProvider from 'next-auth/providers/google';
 // This is the function you were trying to import
 export const getGoogleCalendarClient = (accessToken: string) => {
   const oauth2Client = new google.auth.OAuth2() as OAuth2Client;
@@ -23,9 +24,10 @@ export const getCalendarEvents = async (accessToken: string) => {
   return res.data.items;
 };
 
+
 export const createCalendarEvent = async (accessToken: string, eventDetails: any) => {
   const calendar = getGoogleCalendarClient(accessToken);
-
+  
   const event = {
     summary: eventDetails.title,
     location: eventDetails.location,
@@ -47,6 +49,6 @@ export const createCalendarEvent = async (accessToken: string, eventDetails: any
     calendarId: 'primary',
     requestBody: event,
   });
-
+  
   return res.data;
 };

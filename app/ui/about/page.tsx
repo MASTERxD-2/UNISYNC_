@@ -1,12 +1,18 @@
 "use client";
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from "next/link"
+import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const HeaderWithSidebar: React.FC = () => {
+  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const { data: session } = useSession();
+
   useEffect(() => {
     const navbarToggle = document.getElementById('navbar-toggle');
     const mobileNavbar = document.getElementById('mobile-navbar');
-
     const handleToggle = () => {
       mobileNavbar?.classList.toggle('hidden');
     };
@@ -163,13 +169,15 @@ const HeaderWithSidebar: React.FC = () => {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-              </svg>
-
-                <span className="max-lg:hidden">Logout</span>
-              </button>
+              <a href="javascript:;"
+                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                              </svg>
+                              <span className="max-lg:hidden">Logout</span>
+                            </a>
             </div>
           </div>
         </div>
@@ -179,10 +187,10 @@ const HeaderWithSidebar: React.FC = () => {
       <div className="pt-[68px]">
         <div className="py-3.5 lg:px-8 px-3 bg-gray-50 dark:bg-gray-800">
           <div className="block max-lg:pl-6">
-            <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
+          <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
-                Ronald!
+                {session?.user?.name || 'User'}
               </span>
             </h6>
             <p className="text-xs font-medium text-gray-900 dark:text-white">

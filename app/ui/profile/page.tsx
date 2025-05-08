@@ -1,23 +1,20 @@
 "use client";
 import React, { useEffect } from 'react';
 import Link from "next/link";
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useSession, signOut } from "next-auth/react";
 
-const HeaderWithSidebar: React.FC = () => {
-  useEffect(() => {
-    const navbarToggle = document.getElementById('navbar-toggle');
-    const mobileNavbar = document.getElementById('mobile-navbar');
-
-    const handleToggle = () => {
-      mobileNavbar?.classList.toggle('hidden');
-    };
-
-    navbarToggle?.addEventListener('click', handleToggle);
-
-    return () => {
-      navbarToggle?.removeEventListener('click', handleToggle);
-    };
-  }, []);
-
+export default function ProfilePage() {
+    const [user, setUser] = useState(null);
+    const router = useRouter();
+  
+    const { data: session } = useSession();
+    useEffect(() => {
+      if (status === 'unauthenticated') {
+        router.push('/login');
+      }
+    }, [status, router]);
   return (
     <div className="relative">
       {/* Header */}
@@ -161,13 +158,15 @@ const HeaderWithSidebar: React.FC = () => {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="size-6">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-              </svg>
-
+              <a href="javascript:;"
+                className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                onClick={() => signOut({ callbackUrl: "/ui/login" })}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                </svg>
                 <span className="max-lg:hidden">Logout</span>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -199,50 +198,25 @@ const HeaderWithSidebar: React.FC = () => {
             </div>
             <div className="flex flex-col sm:flex-row max-sm:gap-5 items-center justify-between mb-5">
                 <ul className="flex items-center gap-5">
-                    <li> <a href="javascript:;" className="flex items-center gap-2 cursor-pointer group">
-                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M12.5 14.0902L7.5 14.0902M2.5 9.09545V14.0902C2.5 15.6976 2.5 16.5013 2.98816 17.0006C3.47631 17.5 4.26198 17.5 5.83333 17.5H14.1667C15.738 17.5 16.5237 17.5 17.0118 17.0006C17.5 16.5013 17.5 15.6976 17.5 14.0902V10.9203C17.5 9.1337 17.5 8.24039 17.1056 7.48651C16.7112 6.73262 15.9846 6.2371 14.5313 5.24606L11.849 3.41681C10.9528 2.8056 10.5046 2.5 10 2.5C9.49537 2.5 9.04725 2.80561 8.151 3.41681L3.98433 6.25832C3.25772 6.75384 2.89442 7.0016 2.69721 7.37854C2.5 7.75548 2.5 8.20214 2.5 9.09545Z"
-                                    stroke="black" stroke-width="1.6" stroke-linecap="round" />
-                            </svg>
-                            <span className="font-medium text-base leading-7 text-gray-900">Home</span>
-                        </a>
-                    </li>
-                    <li> <a href="javascript:;" className="flex items-center gap-2 cursor-pointer group">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="20" viewBox="0 0 5 20"
-                                fill="none">
-                                <path d="M4.12567 1.13672L1 18.8633" stroke="#E5E7EB" stroke-width="1.6"
-                                    stroke-linecap="round" />
-                            </svg>
-                            <span className="font-medium text-base leading-7 text-gray-400">Account</span>
-                        </a>
-                    </li>
-                    <li><a href="javascript:;" className="flex items-center gap-2 cursor-pointer group">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="20" viewBox="0 0 5 20"
-                                fill="none">
-                                <path d="M4.12567 1.13672L1 18.8633" stroke="#E5E7EB" stroke-width="1.6"
-                                    stroke-linecap="round" />
-                            </svg>
-                            <span className="font-medium text-base leading-7 text-gray-400">Profile</span>
-                            <span
-                                className="rounded-full py-1.5 px-2.5 bg-indigo-50 flex items-center justify-center font-medium text-xs text-indigo-600">New</span>
-                        </a>
-                    </li>
                 </ul>
                 <div className="flex items-center gap-4">
                     <button
-                        className="rounded-full border border-solid border-gray-300 bg-gray-50 py-3 px-4 text-sm font-semibold text-gray-900 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-50 hover:bg-gray-100 hover:border-gray-300">Message</button>
+                        className="rounded-full border border-solid border-gray-300 bg-gray-50 py-3 px-4 text-sm font-semibold text-gray-900 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-50 hover:bg-gray-100 hover:border-gray-300">Info</button>
                     <button
-                        className="rounded-full border border-solid border-indigo-600 bg-indigo-600 py-3 px-4 text-sm font-semibold text-white whitespace-nowrap shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-200 hover:bg-indigo-700 hover:border-indigo-700">Book
-                        a Session</button>
+                        className="rounded-full border border-solid border-gray-600 bg-gray-600 py-3 px-4 text-sm font-semibold text-white whitespace-nowrap shadow-sm shadow-transparent transition-all duration-500 hover:shadow-gray-200 hover:bg-gray-700 hover:border-gray-700">Update Profile
+                    </button>
                 </div>
             </div>
-            <h3 className="text-center font-manrope font-bold text-3xl leading-10 text-gray-900 mb-3">Jenny Wilson</h3>
-            <p className="font-normal text-base leading-7 text-gray-500 text-center mb-8">A social media influencers and singer</p>
+            <h3 className="text-gray-600 text-bold sm:text-3xl font-semibold text-center">
+              {session?.user?.name || "User"}
+            </h3>
+            <div style={{ height: '2em' }}></div> {/* Corrected inline style */}
+            <p className="font-normal text-base leading-7 text-gray-500 text-center mb-8">
+              Professor at Mahindra University
+            </p>
             <div className="flex items-center justify-center gap-5">
                 <a href="javascript:;"
-                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-indigo-700 hover:border-indigo-700">
+                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-gray-700 hover:border-gray-700">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_1115_412)">
                             <path className="fill-blue-400 transition-all duration-500 group-hover:fill-white"
@@ -266,13 +240,13 @@ const HeaderWithSidebar: React.FC = () => {
                     </svg>
                 </a>
                 <a href="javascript:;"
-                    className="p-3 rounded-full border border-solid border-gray-300 bg-gray-50 group transition-all duration-500 hover:bg-indigo-700 hover:border-indigo-700">
+                    className="p-3 rounded-full border border-solid border-gray-300 bg-gray-50 group transition-all duration-500 hover:bg-gray-700 hover:border-gray-700">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_1115_52)">
-                            <path className="fill-indigo-600 transition-all duration-500 group-hover:fill-white"
+                            <path className="fill-gray-600 transition-all duration-500 group-hover:fill-white"
                                 d="M10.0001 20C15.523 20 20.0001 15.5228 20.0001 10C20.0001 4.47715 15.523 0 10.0001 0C4.47727 0 0.00012207 4.47715 0.00012207 10C0.00012207 15.5228 4.47727 20 10.0001 20Z"
                                 fill="" />
-                            <path className="fill-white transition-all duration-500 group-hover:fill-indigo-700"
+                            <path className="fill-white transition-all duration-500 group-hover:fill-gray-700"
                                 d="M13.2516 3.06946H11.0364C9.72179 3.06946 8.25958 3.62236 8.25958 5.52793C8.266 6.1919 8.25958 6.82779 8.25958 7.54345H6.73877V9.96352H8.30665V16.9305H11.1877V9.91754H13.0893L13.2613 7.53666H11.1381C11.1381 7.53666 11.1428 6.47754 11.1381 6.16997C11.1381 5.41693 11.9216 5.46005 11.9688 5.46005C12.3416 5.46005 13.0666 5.46114 13.2527 5.46005V3.06946H13.2516V3.06946Z"
                                 fill="" />
                         </g>
@@ -284,7 +258,7 @@ const HeaderWithSidebar: React.FC = () => {
                     </svg>
                 </a>
                 <a href="javascript:;"
-                    className="p-3 rounded-full border border-solid border-gray-300 bg-gray-50 group transition-all duration-500 hover:bg-indigo-700 hover:border-indigo-700">
+                    className="p-3 rounded-full border border-solid border-gray-300 bg-gray-50 group transition-all duration-500 hover:bg-gray-700 hover:border-gray-700">
                     <svg className="stroke-red-600 transition-all duration-500 group-hover:stroke-white" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M14.1667 5.83333V5.875M9.16673 17.5H10.8334C13.9761 17.5 15.5474 17.5 16.5237 16.5237C17.5001 15.5474 17.5001 13.976 17.5001 10.8333V9.16667C17.5001 6.02397 17.5001 4.45262 16.5237 3.47631C15.5474 2.5 13.9761 2.5 10.8334 2.5H9.16673C6.02403 2.5 4.45268 2.5 3.47637 3.47631C2.50006 4.45262 2.50006 6.02397 2.50006 9.16667V10.8333C2.50006 13.976 2.50006 15.5474 3.47637 16.5237C4.45268 17.5 6.02403 17.5 9.16673 17.5ZM13.3334 10C13.3334 11.8409 11.841 13.3333 10.0001 13.3333C8.15911 13.3333 6.66673 11.8409 6.66673 10C6.66673 8.15905 8.15911 6.66667 10.0001 6.66667C11.841 6.66667 13.3334 8.15905 13.3334 10Z"
@@ -292,19 +266,19 @@ const HeaderWithSidebar: React.FC = () => {
                     </svg>
                 </a>
                 <a href="javascript:;"
-                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-indigo-700 hover:border-indigo-700">
+                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-gray-700 hover:border-gray-700">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path className="fill-red-600 transition-all duration-500 group-hover:fill-white"
                             d="M1.40288 6.21319C1.48321 4.97646 2.47753 4.00723 3.71535 3.9459C5.5078 3.8571 8.06973 3.75 10.0001 3.75C11.9304 3.75 14.4923 3.8571 16.2848 3.9459C17.5226 4.00723 18.5169 4.97646 18.5972 6.21319C18.6742 7.39808 18.7501 8.85604 18.7501 10C18.7501 11.144 18.6742 12.6019 18.5972 13.7868C18.5169 15.0235 17.5226 15.9928 16.2848 16.0541C14.4923 16.1429 11.9304 16.25 10.0001 16.25C8.06973 16.25 5.5078 16.1429 3.71535 16.0541C2.47753 15.9928 1.48321 15.0235 1.40288 13.7868C1.32591 12.6019 1.25006 11.144 1.25006 10C1.25006 8.85604 1.32591 7.39808 1.40288 6.21319Z"
                             fill="#FC0D1B" />
-                        <path className="fill-white transition-all duration-500 group-hover:fill-indigo-700" d="M8.12506 7.5V12.5L13.1251 10L8.12506 7.5Z" fill="white" />
+                        <path className="fill-white transition-all duration-500 group-hover:fill-gray-700" d="M8.12506 7.5V12.5L13.1251 10L8.12506 7.5Z" fill="white" />
                     </svg>
                 </a>
                 <a href="javascript:;"
-                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-indigo-700 hover:border-indigo-700">
+                    className="p-3 rounded-full border border-solid border-gray-300 group bg-gray-50 transition-all duration-500 hover:bg-gray-700 hover:border-gray-700">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle className="transition-all duration-500 group-hover:fill-white" cx="10.0001" cy="10" r="8.75" fill="url(#paint0_linear_1115_481)" />
-                        <path className="transition-all duration-500 group-hover:fill-indigo-700"
+                        <path className="transition-all duration-500 group-hover:fill-gray-700"
                             d="M14.3667 6.38049C14.4446 5.87707 13.9659 5.47972 13.5183 5.67625L4.60307 9.59053C4.28208 9.73146 4.30556 10.2177 4.63848 10.3237L6.47703 10.9092C6.82792 11.0209 7.20789 10.9631 7.5143 10.7514L11.6594 7.88767C11.7844 7.80131 11.9207 7.97904 11.8139 8.08914L8.83013 11.1654C8.54069 11.4638 8.59814 11.9695 8.94629 12.1878L12.2869 14.2827C12.6616 14.5176 13.1436 14.2816 13.2137 13.8288L14.3667 6.38049Z"
                             fill="white" />
                         <defs>
@@ -385,4 +359,3 @@ const HeaderWithSidebar: React.FC = () => {
   );
 };
 
-export default HeaderWithSidebar;
