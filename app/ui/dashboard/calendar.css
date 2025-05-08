@@ -1,0 +1,58 @@
+/* calendar.css */
+
+.rbc-calendar {
+    font-family: 'Inter', sans-serif;
+  }
+  
+  .rbc-month-view {
+    border: none;
+  }
+  
+  .rbc-header {
+    background-color: #f9fafb;
+    color: #313336;
+    font-weight: 600;
+    padding: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  
+  .rbc-date-cell {
+    padding: 0.75rem;
+    color: #0c0c0c;
+  }
+  
+  .rbc-event {
+    background-color: #040404 !important; 
+    color: white;
+    padding: 2px 6px;
+    border-radius: 0.375rem; 
+    font-size: 0.875rem;
+  }
+  
+  .rbc-today {
+    background-color: #dfe3e6 !important; /* light blue highlight */
+  }
+  
+  .rbc-off-range-bg {
+    background-color: #f3f4f6; /* gray-100 */
+  }
+  
+  /* Reduce height/padding of the event box */
+.rbc-event {
+  padding: 4px 6px;
+  font-size: 0.875rem; /* Tailwind: text-sm */
+  border-radius: 0.375rem; /* Tailwind: rounded-md */
+  line-height: 1.2;
+  background-color: #050505; /* Tailwind indigo-600 */
+  color: white;
+}
+
+/* Optional: Remove bold text */
+.rbc-event-content {
+  font-weight: 500; /* Tailwind: font-medium */
+}
+
+/* Optional: Adjust spacing between events */
+.rbc-day-slot .rbc-event {
+  margin-bottom: 2px;
+}

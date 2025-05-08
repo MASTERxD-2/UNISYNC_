@@ -1,0 +1,76 @@
+/* Wrapper container for calendar */
+.calendar-container {
+    width: 100%;
+    padding: 10px;
+  }
+  
+  /* Styling for the calendar grid (days of the month) */
+  .rbc-calendar {
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .rbc-header {
+    background-color: #f3f4f6; /* Light gray for headers */
+    color: #555;
+    text-align: center;
+  }
+  
+  .rbc-day-bg {
+    background-color: #fafafa; /* Light gray for day backgrounds */
+    border: 1px solid #e5e7eb; /* Light gray borders */
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 70px; /* Adjust day cell height */
+    min-height: 70px;
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+  }
+  
+  .rbc-day-bg:hover {
+    background-color: #f1f5f9; /* Darker gray on hover */
+  }
+  
+  .rbc-day-cell {
+    position: relative;
+  }
+  
+  .rbc-day-number {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333; /* Dark text for the date number */
+  }
+  
+  .rbc-event {
+    background-color: #4CAF50; /* Example: Green for events */
+    color: white;
+    border-radius: 5px;
+    padding: 5px;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 5px;
+  }
+  
+  .rbc-event:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+  }
+  
+  /* Optional: Add event hover effect */
+  .rbc-day-event:hover {
+    background-color: #9CA3AF; /* Hover background for events */
+  }
+  
+  /* Customize day cell borders for responsive design */
+  @media (max-width: 768px) {
+    .rbc-day-bg {
+      min-height: 60px; /* Shorter height on smaller screens */
+    }
+  }
+  
+  /* Ensure the event tooltip text is visible on hover */
+  .rbc-event-tooltip {
+    font-size: 14px;
+    color: #fff;
+  }
+  

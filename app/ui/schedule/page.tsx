@@ -1,22 +1,49 @@
 "use client";
-import React, { useEffect } from 'react';
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const HeaderWithSidebar: React.FC = () => {
-  useEffect(() => {
-    const navbarToggle = document.getElementById('navbar-toggle');
-    const mobileNavbar = document.getElementById('mobile-navbar');
+export default function CreateEventPage() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    start_time: "",
+    end_time: "",
+    location: "",
+    visibility: "public",
+    event_type: "general",
+    is_recurring: false,
+    recurrence_pattern: "",
+  });
 
-    const handleToggle = () => {
-      mobileNavbar?.classList.toggle('hidden');
-    };
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const updatedValue =
+      type === "checkbox" && "checked" in e.target
+        ? (e.target as HTMLInputElement).checked
+        : value;
+  
+    setFormData((prev) => ({ ...prev, [name]: updatedValue }));
+  };
+  
 
-    navbarToggle?.addEventListener('click', handleToggle);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-    return () => {
-      navbarToggle?.removeEventListener('click', handleToggle);
-    };
-  }, []);
+    const response = await fetch("/api/schedule", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    if (response.ok) {
+      router.push("calendar");
+    } else {
+      alert("Failed to create event");
+    }
+  };
 
   return (
     <div className="relative">
@@ -199,72 +226,127 @@ const HeaderWithSidebar: React.FC = () => {
       </div>
 
       {/* Event Name */}
-      <div className="w-full flex-col justify-start items-start gap-1.5 flex">
-        <label className="text-gray-600 text-base font-medium">Event Name</label>
-        <input
-          type="text"
-          placeholder="e.g., AI Research Symposium"
-          className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
-        />
-      </div>
+      <div className="w-full px-5 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 text-base">
+      <form onSubmit={handleSubmit} className="space-y-2">
+        <div className="w-full flex-col justify-start items-start gap-1.5 flex">
+          <label className="text-gray-600 text-base font-medium">Event Name</label>
+          <input
+            type="text"
+            name="title"
+            placeholder="e.g., AI Research Symposium"
+            required
+            value={formData.title}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+          />
+        </div>
+        <div className="w-full flex-col justify-start items-start gap-1.5 flex">
+          <label className="text-gray-600 text-base font-medium">Event Description</label>
+          <textarea
+            name="description"
+            placeholder="Add a brief description of the event"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+            rows={4}
+          />
+        </div>
 
-      {/* Description */}
-      <div className="w-full flex-col justify-start items-start gap-1.5 flex">
-        <label className="text-gray-600 text-base font-medium">Event Description</label>
-        <textarea
-          placeholder="Enter a short description of the event..."
-          className="w-full px-5 py-3 h-28 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
-        ></textarea>
-      </div>
-
-      {/* Date & Time */}
-      <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="flex-col justify-start items-start gap-1.5 flex">
           <label className="text-gray-600 text-base font-medium">Start Date & Time</label>
           <input
             type="datetime-local"
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+            name="start_time"
+            required
+            value={formData.start_time}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
           />
         </div>
         <div className="flex-col justify-start items-start gap-1.5 flex">
           <label className="text-gray-600 text-base font-medium">End Date & Time</label>
           <input
-            type="datetime-local"
-            className="w-full px-4 py-2 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
-          />
+              type="datetime-local"
+              name="end_time"
+              required
+              value={formData.end_time}
+              onChange={handleChange}
+              className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+            />
         </div>
       </div>
+        <div className="w-full flex-col justify-start items-start gap-1.5 flex">
+          <label className="text-gray-600 text-base font-medium">Location</label>
+          <input
+            type="text"
+            name="location"
+            placeholder="e.g., Main Auditorium"
+            value={formData.location}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+          />
+        </div>
 
-      {/* Location */}
-      <div className="w-full flex-col justify-start items-start gap-1.5 flex">
-        <label className="text-gray-600 text-base font-medium">Location</label>
-        <input
-          type="text"
-          placeholder="e.g., Room 302, Admin Block"
-          className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
-        />
-      </div>
+        <div className="w-full flex-col justify-start items-start gap-1.5 flex">
+          <label className="text-gray-600 text-base font-medium">Visibility</label>
+          <select
+            name="visibility"
+            value={formData.visibility}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+          >
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </div>
 
-      {/* Event Type */}
-      <div className="w-full flex-col justify-start items-start gap-1.5 flex">
-        <label className="text-gray-600 text-base font-medium">Event Type</label>
-        <select
-          className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
-        >
-          <option>Seminar</option>
-          <option>Workshop</option>
-          <option>Guest Lecture</option>
-          <option>Club Meeting</option>
-          <option>Other</option>
-        </select>
-      </div>
+        <div className="w-full flex-col justify-start items-start gap-1.5 flex">
+          <label className="text-gray-600 text-base font-medium">Event Type</label>
+          <select
+            name="event_type"
+            value={formData.event_type}
+            onChange={handleChange}
+            className="w-full px-5 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+          >
+            <option value="general">General</option>
+            <option value="meeting">Meeting</option>
+            <option value="class">Class</option>
+          </select>
+        </div>
+        
+        <div className="w-full flex-row items-center gap-2 flex">
+          <input
+            type="checkbox"
+            name="is_recurring"
+            checked={formData.is_recurring}
+            onChange={handleChange}
+            className="accent-blue-600 w-5 h-5"
+          />
+          <label className="text-gray-700 text-base font-medium">Recurring Event</label>
+        </div>
 
-      {/* Submit */}
-      <div className="w-full flex justify-end mt-6">
-        <button className="bg-grey-600 hover:bg-grey-700 text-black text-base font-semibold px-6 py-3 rounded-lg shadow-lg transition duration-300">
-          Add Event
-        </button>
-      </div>
+        {formData.is_recurring && (
+          <div className="w-full flex-col justify-start items-start gap-3 flex">
+            <label className="text-gray-600 text-base font-medium">Recurrence Pattern</label>
+            <input
+              type="text"
+              name="recurrence_pattern"
+              placeholder="e.g., Every Monday"
+              value={formData.recurrence_pattern}
+              onChange={handleChange}
+              className="w-full px-7 py-3 rounded-lg border border-gray-200 shadow-sm focus:outline-none text-gray-900"
+            />
+          </div>
+        )}
+          <button
+            type="submit"
+            className="w-full bg-gray-600 text-white px-5 py-3 rounded-lg font-semibold shadow-md hover:bg-gray-700 transition"
+          >
+            Create Event
+          </button>
+      </form>
+    </div>
     </div>
   </div>
 </section>
@@ -329,6 +411,4 @@ const HeaderWithSidebar: React.FC = () => {
 </footer>
 </div>
   );
-};
-
-export default HeaderWithSidebar;
+}
