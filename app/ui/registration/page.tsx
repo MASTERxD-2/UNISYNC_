@@ -214,7 +214,7 @@ export default function RegistrationPage() {
             <span className="ml-3 text-xl">UNISYNC</span>
           </a>
           <p className="text-sm text-gray-500 sm:ml-4 sm:pl-4 sm:border-l-2 sm:border-gray-200">
-            © 2024 UNISYNC
+            © 2025 UNISYNC - All Rights Reserved.
           </p>
         </div>
       </footer>

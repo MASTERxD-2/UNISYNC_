@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import Link from "next/link";
 import TaskCard from "@/components/TaskCard";
-import { signOut } from "next-auth/react";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface Task {
   event_id: number;
@@ -20,8 +20,22 @@ interface Task {
 }
 
 export default function TasksAndRemindersPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [editTask, setEditTask] = useState<Task | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
+  const handleLogout = async () => {
+    await fetch("/api/logout", { method: "POST" });
+    router.replace("/ui/login");
+  };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/ui/login");
+    }
+  }, [status, router]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -32,6 +46,31 @@ export default function TasksAndRemindersPage() {
 
     fetchTasks();
   }, []);
+
+  // Delete handler
+  const handleDelete = async (id: number) => {
+    await fetch(`/api/tasksandreminders?id=${id}`, { method: 'DELETE' });
+    setTasks(tasks => tasks.filter(t => t.event_id !== id));
+  };
+
+  // Update handler (open modal)
+  const handleUpdate = (task: Task) => {
+    setEditTask(task);
+    setShowEditModal(true);
+  };
+
+  // Save update
+  const handleSaveUpdate = async () => {
+    if (!editTask) return;
+    await fetch(`/api/tasksandreminders?id=${editTask.event_id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(editTask),
+    });
+    setTasks(tasks => tasks.map(t => t.event_id === editTask.event_id ? editTask : t));
+    setShowEditModal(false);
+    setEditTask(null);
+  };
 
   return (
     <div className="relative">
@@ -176,15 +215,15 @@ export default function TasksAndRemindersPage() {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <a href="javascript:;"
-                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
-                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                              </svg>
-                              <span className="max-lg:hidden">Logout</span>
-                            </a>
+              <button
+                className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                onClick={handleLogout}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                </svg>
+                <span className="max-lg:hidden">Logout</span>
+              </button>
             </div>
           </div>
         </div>
@@ -194,7 +233,7 @@ export default function TasksAndRemindersPage() {
       <div className="pt-[68px]">
         <div className="py-3.5 lg:px-8 px-3 bg-gray-50 dark:bg-gray-800">
           <div className="block max-lg:pl-6">
-          <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
+            <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
                 {session?.user?.name || 'User'}
@@ -226,17 +265,49 @@ export default function TasksAndRemindersPage() {
           No tasks or reminders found.
         </div>
       ) : (
-        tasks.map((task) => <TaskCard key={task.event_id} task={task} onDelete={function (id: number): void {
-          throw new Error('Function not implemented.');
-        } } />)
+        tasks.map((task) => (
+          <TaskCard
+            key={task.event_id}
+            task={task}
+            onDelete={handleDelete}
+            onUpdate={handleUpdate}
+          />
+        ))
       )}
     </div>
-
+    {/* Edit Modal */}
+    {showEditModal && editTask && (
+      <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md">
+          <h2 className="text-lg font-bold mb-4">Edit Task</h2>
+          <input
+            className="w-full border p-2 mb-2"
+            value={editTask.task_title}
+            onChange={e => setEditTask({ ...editTask, task_title: e.target.value })}
+          />
+          <textarea
+            className="w-full border p-2 mb-2"
+            value={editTask.description}
+            onChange={e => setEditTask({ ...editTask, description: e.target.value })}
+          />
+          <input
+            className="w-full border p-2 mb-2"
+            type="date"
+            value={editTask.due_date.slice(0,10)}
+            onChange={e => setEditTask({ ...editTask, due_date: e.target.value })}
+          />
+          <div className="flex gap-2 justify-end">
+            <button className="px-4 py-2 bg-gray-200 rounded" onClick={() => setShowEditModal(false)}>Cancel</button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleSaveUpdate}>Save</button>
+          </div>
+        </div>
+      </div>
+    )}
     {/* Task Grid */}
   </div>
 </div>
 
-        <footer className="text-gray-600 body-font">
+<footer className="text-gray-600 body-font">
   <div className="container px-5 py-24 mx-auto flex md:items-center lg:items-start md:flex-row md:flex-nowrap flex-wrap flex-col">
     <div className="w-64 flex-shrink-0 md:mx-0 mx-auto text-center md:text-left">
       <a className="flex title-font font-medium items-center md:justify-start justify-center text-gray-900">
@@ -261,7 +332,7 @@ export default function TasksAndRemindersPage() {
   </div>
   <div className="bg-gray-100">
     <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-      <p className="text-gray-500 text-sm text-center sm:text-left">© 2025 UNISYNC —
+      <p className="text-gray-500 text-sm text-center sm:text-left">©️ 2025 UNISYNC —
         <a href="https://twitter.com/knyttneve" rel="noopener noreferrer" className="text-gray-600 ml-1" target="_blank">All Rights Reserverd.</a>
       </p>
       <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
@@ -294,5 +365,3 @@ export default function TasksAndRemindersPage() {
       </div>
   );
 };
-
-
