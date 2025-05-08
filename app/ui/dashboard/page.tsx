@@ -114,8 +114,8 @@ export default function DashboardPage() {
 
   const { data: session } = useSession();
   useEffect(() => {
-    if (!session) {
-      router.push('/ui/login');
+    if (status === 'unauthenticated') {
+      router.push('/login');
     }
   }, [status, router]);
 
@@ -127,6 +127,7 @@ export default function DashboardPage() {
     };
     fetchTasks();
   }, []);
+
 
   const today = new Date();
   const formattedDate = formatDate(today);
