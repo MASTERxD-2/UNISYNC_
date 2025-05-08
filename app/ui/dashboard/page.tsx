@@ -14,8 +14,9 @@ import Link from 'next/link';
 import { momentLocalizer, Views } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useSession } from "next-auth/react";
 
-const localizer = momentLocalizer(moment); // ✅ Keep this only once
+const localizer = momentLocalizer(moment);
 
 const formatDate = (date: Date): string => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -111,18 +112,12 @@ export default function DashboardPage() {
   const [view, setView] = useState<View>('month'); // Explicitly typed to match 'View' type
   const router = useRouter();
 
+  const { data: session } = useSession();
   useEffect(() => {
-    const fetchUserData = async () => {
-      const res = await fetch('/api/testdb');
-      const data = await res.json();
-      if (data.user) {
-        setUser(data.user);
-      } else {
-        router.push('/login');
-      }
-    };
-    fetchUserData();
-  }, [router]);
+    if (!session) {
+      router.push('/ui/login');
+    }
+  }, [status, router]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -132,8 +127,6 @@ export default function DashboardPage() {
     };
     fetchTasks();
   }, []);
-
-  if (!user) return <div>Loading...</div>;
 
   const today = new Date();
   const formattedDate = formatDate(today);
@@ -306,7 +299,7 @@ export default function DashboardPage() {
             <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
-                Ronald!
+                {session?.user?.name || "User"}
               </span>
             </h6>
             <p className="text-xs font-medium text-gray-900 dark:text-white">
