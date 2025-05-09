@@ -99,6 +99,15 @@ Once you are logged in, you'll be able to use the web application, and if there'
 🎉 **YOU’RE ALL SET!**
 Happy syncing 🗓️✨
 
+
+Additional notes for evaluation:
+
+Also due to short time duration for presentation, we couldn't mention much about our requirement elicitation process, we went to Dr.Meraj Alam to understand the domain knowledge to sync calendars and also spoke regarding the same with our mentor Prof.Murali Krishna Bukkasamudram.
+
+The previous version of the application 1.1, 2.1 have been deployed, however in the version 3.1 has a few dependency conflicts which are to be fixed, then the deployment can be done seemlessly. 
+
+Over the course of the project we had to migrate to different technologies other than frontend and backend(which remains as promised), but for database we had to shift to postgresql neondb/serverless 
+
 ---
 
 
