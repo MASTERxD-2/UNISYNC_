@@ -8,6 +8,7 @@ Built with **TypeScript**, **JavaScript**, **Google OAuth**, and **Node.js**.
 ## 🚀 Getting Started
 
 Follow these steps to run the project locally:
+While cloning the repository, make sure, you have the correct versions of the packages, according to the package.json file, and use "packageManager": "pnpm@10.4.1", version to proceed with accessing the application
 
 ### 🔁 1. Clone the Repository
 
@@ -25,6 +26,7 @@ pnpm install
 ```
 
 ### 🔐 3. Set Up Environment Variables
+Despite the fact that we've asked you to set up the .env file, for convenience we've provided the .env file, and make sure that is present.
 
 Create a file named `.env` in the root `UNISYNC_` folder, and paste the following:
 
@@ -78,12 +80,20 @@ You’ll see a message like:
 ```bash
 ▲ Next.js 15.3.1 (Turbopack)
 
-Local:    http://localhost:3001
-Network:  http://172.16.0.2:3001
+Local:    http://localhost:3000
+Network:  http://172.16.0.2:3000
 Environments: .env
 ```
 
 👉 **Click on the link**, and it will open your app in the browser.
+
+The web application has to successfully login with Google Credentials, however, since the web application is still in the Testing phase, the security setting do not allow external users to log in to the system, specifically anyone apart from the team members trying to sign-in using their Google Credentials, thus, we request you to use the above login form - that allows you to input the credentials of a dummy user, that allows you to access the website
+
+ Email - asha@mu.edu
+ Password - $2b$12$KIX/2r2PMR9r1RNoUQ2y3O.Ts8eEZ.vc5H5SLh/8ZdEz2nIR.7zZe
+
+Once you are logged in, you'll be able to use the web application.
+
 
 ---
 
@@ -91,5 +101,4 @@ Environments: .env
 Happy syncing 🗓️✨
 
 ---
-
 
