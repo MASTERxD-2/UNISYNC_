@@ -26,6 +26,7 @@ pnpm install
 ```
 
 ### 🔐 3. Set Up Environment Variables
+Despite the fact that we've asked you to set up the .env file, for convenience we've provided the .env file, and make sure that is present.
 
 Create a file named `.env` in the root `UNISYNC_` folder, and paste the following:
 
@@ -100,5 +101,4 @@ Once you are logged in, you'll be able to use the web application.
 Happy syncing 🗓️✨
 
 ---
-
 
