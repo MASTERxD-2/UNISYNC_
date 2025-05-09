@@ -91,7 +91,7 @@ The web application has to successfully login with Google Credentials, however, 
  Email - asha@mu.edu
  Password - $2b$12$KIX/2r2PMR9r1RNoUQ2y3O.Ts8eEZ.vc5H5SLh/8ZdEz2nIR.7zZe
 
-Once you are logged in, you'll be able to use the web application.
+Once you are logged in, you'll be able to use the web application, and if there's any functionality error or delay, wait for them to be reflected, and try restarting the server.
 
 
 ---
