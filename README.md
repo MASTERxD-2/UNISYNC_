@@ -8,7 +8,7 @@ Built with **TypeScript**, **JavaScript**, **Google OAuth**, and **Node.js**.
 ## 🚀 Getting Started
 
 Follow these steps to run the project locally:
-While cloning the repository, make sure, you have the correct versions of the packages, according to the package.json file, and use "packageManager": "pnpm@10.4.1", version to proceed with accessing the application
+While cloning the repository, make sure, you have the correct versions of the packages, according to the package.json file, and use "packageManager": "pnpm@10.4.1", version to proceed with accessing the application, you can use any of the branches frontend or Version3.1
 
 ### 🔁 1. Clone the Repository
 
