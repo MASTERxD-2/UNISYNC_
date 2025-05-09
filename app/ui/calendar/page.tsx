@@ -32,6 +32,8 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 
+
+
 const formatDate = (date: Date): string => {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = [
@@ -94,148 +96,12 @@ type EventType = {
   end: Date;
 };
 
-// Type for calendar providers
-type CalendarProvider = {
-  id: string;
-  name: string;
-  icon: string;
-  connected: boolean;
-};
-
 export default function CalendarPage() {
-  const router = useRouter();
-  useEffect(() => {
-    if (status === 'unauthenticated') {
-      router.push('/login');
-    }
-  }, [status, router]);
-
-  const { data: session } = useSession();
-  
   const [events, setEvents] = useState<EventType[]>([]);
   const [view, setView] = useState<View>('month'); // Explicitly typed to match 'View' type
-  const [showSyncModal, setShowSyncModal] = useState(false);
-  const [syncLoading, setSyncLoading] = useState(false);
-  const [syncSuccess, setSyncSuccess] = useState<boolean | null>(null);
-  const [calendarProviders, setCalendarProviders] = useState<CalendarProvider[]>([
-    {
-      id: 'google',
-      name: 'Google Calendar',
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/a/a5/Google_Calendar_icon_%282020%29.svg',
-      connected: Boolean(session?.user && (session.user as any).accessToken),
-    },
-    {
-      id: 'outlook',
-      name: 'Microsoft Outlook',
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/d/df/Microsoft_Office_Outlook_%282018%E2%80%93present%29.svg',
-      connected: false,
-    },
-    {
-      id: 'apple',
-      name: 'Apple Calendar',
-      icon: 'https://upload.wikimedia.org/wikipedia/commons/5/5e/Calendar_iOS.svg',
-      connected: false,
-    }
-  ]);
-  const [selectedProviders, setSelectedProviders] = useState<string[]>(['google']);
-
-  const handleLogout = async () => {
-    await fetch("/api/logout", { method: "POST" });
-    router.replace("/ui/login");
-  };
-
+  const { data: session } = useSession();
   const today = new Date();
-    const formattedDate = formatDate(today);
-    const handleSignOut = () => {
-      signOut();
-    }
-
-  // Sync calendars handler
-  const handleSync = async () => {
-    setSyncLoading(true);
-    setSyncSuccess(null);
-    
-    try {
-      console.log('Starting sync with providers:', selectedProviders);
-      
-      // Check for active session
-      if (!session || !session.user) {
-        console.error('No active session detected');
-        alert('Please log in to sync your calendars');
-        setSyncSuccess(false);
-        return;
-      }
-      
-      // Send the selected providers to be synced
-      const response = await fetch('/api/calendar/sync', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          providers: selectedProviders,
-        }),
-        // Ensure credentials are included to send cookies
-        credentials: 'include'
-      });
-      
-      // Get response data
-      const data = await response.json();
-      console.log('Sync response:', data);
-      
-      if (response.ok) {
-        // Refresh events after sync
-        const eventsResponse = await fetch('/api/calendar');
-        const eventsData = await eventsResponse.json();
-        
-        const mappedEvents = eventsData.map((event: any) => ({
-          ...event,
-          start: new Date(event.start_time),
-          end: new Date(event.end_time),
-          title: event.title,
-        }));
-        
-        setEvents(mappedEvents);
-        setSyncSuccess(true);
-        
-        // Show success message with details
-        console.log(`Calendar sync successful with: ${data.syncedProviders?.join(', ') || selectedProviders.join(', ')}`);
-        console.log(`Synced ${data.eventCount || 'unknown number of'} events`);
-        
-        // Close modal after successful sync (with a delay)
-        setTimeout(() => {
-          setShowSyncModal(false);
-        }, 1500);
-      } else {
-        // Handle specific error cases
-        if (data.error === 'User not authenticated or missing access token') {
-          console.error('Authentication error:', data);
-          alert('Authentication issue. Please log out and log back in to reconnect your Google account.');
-        } else {
-          console.error('Sync failed with error:', data.error || 'Unknown error');
-          alert(`Sync failed: ${data.error || 'Unknown error'}`);
-        }
-        setSyncSuccess(false);
-      }
-    } catch (error) {
-      console.error('Calendar sync error:', error);
-      alert('Error connecting to the server. Please check your internet connection and try again.');
-      setSyncSuccess(false);
-    } finally {
-      setSyncLoading(false);
-    }
-  };
-  
-  // Toggle provider selection
-  const toggleProviderSelection = (providerId: string) => {
-    setSelectedProviders(prev => {
-      if (prev.includes(providerId)) {
-        return prev.filter(id => id !== providerId);
-      } else {
-        return [...prev, providerId];
-      }
-    });
-  };
+  const formattedDate = formatDate(today);
 
   // Fetch events from the API
   useEffect(() => {
@@ -416,15 +282,15 @@ export default function CalendarPage() {
                   <span className="max-lg:hidden">Create Event</span>
                 </button>
               </Link>
-              <button
-                className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
-                onClick={handleLogout}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                </svg>
-                <span className="max-lg:hidden">Logout</span>
-              </button>
+              <a href="javascript:;"
+                              className="group py-2 px-2 lg:pr-5 lg:pl-3.5 lg:mx-0 mx-auto flex items-center whitespace-nowrap gap-1.5 font-medium text-sm text-white border border-solid border-gray-600 bg-gray-600 rounded-lg transition-all duration-300 hover:bg-gray-700 hover:border-gray-700"
+                              onClick={() => signOut({ callbackUrl: "/ui/login" })}
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6" >
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
+                              </svg>
+                              <span className="max-lg:hidden">Logout</span>
+                            </a>
             </div>
           </div>
         </div>
@@ -434,7 +300,7 @@ export default function CalendarPage() {
       <div className="pt-[68px]">
         <div className="py-3.5 lg:px-8 px-3 bg-gray-50 dark:bg-gray-800">
           <div className="block max-lg:pl-6">
-            <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
+          <h6 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-white whitespace-nowrap mb-1.5">
               Welcome back,{' '}
               <span className="text-gray-600 text-base sm:text-lg font-semibold">
                 {session?.user?.name || 'User'}
@@ -451,22 +317,11 @@ export default function CalendarPage() {
                 <h1 className="mb-4 text-4xl font-extrabold tracking-tight leading-none text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
                     {formattedDate}
                   </h1>
-                    <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Of the five House Calendars, the Private Calendar is the one to which all Private Bills are referred. Private Bills deal with specific individuals, corporations, institutions, and so forth, as distinguished from public bills which deal with classes only..</p>
+                     <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 xl:px-48 dark:text-gray-400">Of the five House Calendars, the Private Calendar is the one to which all Private Bills are referred. Private Bills deal with specific individuals, corporations, institutions, and so forth, as distinguished from public bills which deal with classes only..</p>
                 </div>
         </section>
         <div className="p-2">
-                          <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-2xl font-bold">Calendar</h2>
-                            <button 
-                              onClick={() => setShowSyncModal(true)}
-                              className="py-2 px-4 bg-gray-600 text-white font-medium rounded-lg flex items-center gap-2 hover:bg-gray-700 transition-colors"
-                            >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
-                              </svg>
-                              Sync Calendars
-                            </button>
-                          </div>
+                          <h2 className="text-2xl font-bold mb-4">Calendar</h2>
                           <Calendar
                             localizer={localizer}
                             events={events}
@@ -520,7 +375,7 @@ export default function CalendarPage() {
   </div>
   <div className="bg-gray-100">
     <div className="container mx-auto py-4 px-5 flex flex-wrap flex-col sm:flex-row">
-      <p className="text-gray-500 text-sm text-center sm:text-left">©️ 2025 UNISYNC —
+      <p className="text-gray-500 text-sm text-center sm:text-left">© 2025 UNISYNC —
         <a href="https://twitter.com/knyttneve" rel="noopener noreferrer" className="text-gray-600 ml-1" target="_blank">All Rights Reserverd.</a>
       </p>
       <span className="inline-flex sm:ml-auto sm:mt-0 mt-2 justify-center sm:justify-start">
@@ -550,110 +405,6 @@ export default function CalendarPage() {
     </div>
   </div>
 </footer>
-
-      {/* Sync Modal */}
-      {showSyncModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-xl w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold">Sync Calendars</h3>
-              <button 
-                onClick={() => setShowSyncModal(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            
-            <p className="text-gray-600 mb-4">
-              Select which calendars you want to sync with UNISYNC. Your events will be synced both ways.
-            </p>
-            
-            <div className="space-y-3 mb-6">
-              {calendarProviders.map(provider => (
-                <div 
-                  key={provider.id}
-                  className={`border rounded-lg p-3 flex items-center gap-3 cursor-pointer transition-colors ${
-                    selectedProviders.includes(provider.id) 
-                      ? 'border-gray-600 bg-gray-50' 
-                      : 'border-gray-200'
-                  }`}
-                  onClick={() => toggleProviderSelection(provider.id)}
-                >
-                  <div className="flex-shrink-0 w-10 h-10">
-                    <img src={provider.icon} alt={provider.name} className="w-full h-full object-contain" />
-                  </div>
-                  <div className="flex-grow">
-                    <h4 className="font-medium">{provider.name}</h4>
-                    <p className="text-sm text-gray-500">
-                      {provider.connected ? 'Connected' : 'Not connected'}
-                    </p>
-                  </div>
-                  <div className="flex-shrink-0">
-                    <input 
-                      type="checkbox" 
-                      checked={selectedProviders.includes(provider.id)}
-                      readOnly
-                      className="h-5 w-5 text-gray-600 rounded focus:ring-gray-500"
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="flex gap-3 justify-end">
-              <button
-                onClick={() => setShowSyncModal(false)}
-                className="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleSync}
-                disabled={syncLoading || selectedProviders.length === 0}
-                className={`px-4 py-2 rounded-lg text-white flex items-center gap-2 transition-colors ${
-                  syncLoading || selectedProviders.length === 0 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gray-600 hover:bg-gray-700'
-                }`}
-              >
-                {syncLoading ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Syncing...
-                  </>
-                ) : syncSuccess === true ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
-                    </svg>
-                    Synced!
-                  </>
-                ) : syncSuccess === false ? (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
-                    </svg>
-                    Try Again
-                  </>
-                ) : (
-                  <>
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
-                    Sync Now
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      </div>
   );
 };
