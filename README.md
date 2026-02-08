@@ -1,23 +1,23 @@
-# 🧭 UNISYNC
+#  UNISYNC
 
 *A collaborative web platform for syncing calendars and events across departments at Mahindra University.*
 Built with **TypeScript**, **JavaScript**, **Google OAuth**, and **Node.js**.
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 Follow these steps to run the project locally:
 While cloning the repository, make sure, you have the correct versions of the packages, according to the package.json file, and use "packageManager": "pnpm@10.4.1", version to proceed with accessing the application, you can use any of the branches frontend or Version3.1
 
-### 🔁 1. Clone the Repository
+###  1. Clone the Repository
 
 ```bash
 git clone https://github.com/MASTERxD-2/UNISYNC_
 cd UNISYNC_
 ```
 
-### 📦 2. Install Dependencies
+###  2. Install Dependencies
 
 Ensure you have **Node.js** installed, then run:
 
@@ -25,12 +25,12 @@ Ensure you have **Node.js** installed, then run:
 pnpm install
 ```
 
-### 🔐 3. Set Up Environment Variables
+###  3. Set Up Environment Variables
 
 Create a file named `.env` in the root `UNISYNC_` folder, and paste the following:
 
 ```env
-# 🌐 Database Configuration
+#  Database Configuration
 DATABASE_URL='postgresql://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>?sslmode=require'
 DATABASE_URL_UNPOOLED='postgresql://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>?sslmode=require'
 
@@ -39,7 +39,7 @@ PGDATABASE='<DB_NAME>'
 PGUSER='<USERNAME>'
 PGPASSWORD='<PASSWORD>'
 
-# 🛠️ Postgres Templates (Vercel, Prisma)
+#  Postgres Templates (Vercel, Prisma)
 POSTGRES_URL='postgres://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>?sslmode=require'
 POSTGRES_URL_NON_POOLING='postgres://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>?sslmode=require'
 POSTGRES_USER='<USERNAME>'
@@ -49,23 +49,23 @@ POSTGRES_DATABASE='<DB_NAME>'
 POSTGRES_URL_NO_SSL='postgres://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>'
 POSTGRES_PRISMA_URL='postgres://<USERNAME>:<PASSWORD>@<HOST>/<DB_NAME>?connect_timeout=15&sslmode=require'
 
-# 🔑 Secrets
+#  Secrets
 JWT_SECRET='<JWT_SECRET>'
 NEXTAUTH_SECRET='<NEXTAUTH_SECRET>'
 
-# 🔓 Google OAuth
+#  Google OAuth
 GOOGLE_CLIENT_ID='<GOOGLE_CLIENT_ID>'
 GOOGLE_CLIENT_SECRET='<GOOGLE_CLIENT_SECRET>'
 
-# 🌍 Auth URL
+#  Auth URL
 NEXTAUTH_URL=http://localhost:3000
 ```
 
-✅ Save the file!
+ Save the file!
 
 ---
 
-### 🧭 4. Navigation & Running the App
+###  4. Navigation & Running the App
 
 In your terminal, run:
 
@@ -84,7 +84,7 @@ Network:  http://172.16.0.2:3000
 Environments: .env
 ```
 
-👉 **Click on the link**, and it will open your app in the browser.
+ **Click on the link**, and it will open your app in the browser.
 
 The web application has to successfully login with Google Credentials, however, since the web application is still in the Testing phase, the security setting do not allow external users to log in to the system, specifically anyone apart from the team members trying to sign-in using their Google Credentials, thus, we request you to use the above login form - that allows you to input the credentials of a dummy user, that allows you to access the website
 
@@ -96,8 +96,8 @@ Once you are logged in, you'll be able to use the web application, and if there'
 
 ---
 
-🎉 **YOU’RE ALL SET!**
-Happy syncing 🗓️✨
+ **YOU’RE ALL SET!**
+Happy syncing 
 
 
 Additional notes for evaluation:
